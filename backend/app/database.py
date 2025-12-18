@@ -4,11 +4,11 @@ from sqlalchemy.orm import sessionmaker
 
 from app.settings import settings
 
+# connect_args={"check_same_thread": False} - специфичная настройка для sqlite
 engine = create_engine(settings.database_url, connect_args={"check_same_thread": False})
 
 # Фабрика сессий которая будет создавать новый инстанс сессии во время каждого нашего запроса
 # смотрит на engine который мы настроили на нашу bd через settings.database_url
-# connect_args={"check_same_thread": False} - специфичная настройка для sqlite
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
@@ -22,8 +22,7 @@ Base = declarative_base()
 # это мы будем использовать в роутах чтобы прямо там
 # открывать эту сессию и когда наша вьюха завершит работу
 # она выполнит код в finally чтобы закрыть сессию наверняка
-# я пожалуй создам пример в папке app yield.md в котором
-# напишу то как работает функция с yield
+# в папке guides создал гайд depends_yield_db.md
 def get_db():
     db = SessionLocal()
     try:
@@ -32,5 +31,9 @@ def get_db():
         db.close()
 
 
+# используется в main.py где мы инициализируем наш приложение на фастапи
+# все sqlalchemy модели которые мы создавали он создает как таблицы в бд если их нет
+# если они есть то он их не трогает - даже если мы как то изменили модель - он смотрит
+# только на ее наличие в базе
 def init_db():
     Base.metadata.create_all(bind=engine)
