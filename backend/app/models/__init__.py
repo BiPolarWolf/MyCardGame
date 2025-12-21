@@ -1,3 +1,3 @@
-from .card import Card, PowerType
+from .card import Card, CardType
 
-__all__ = ["Card", "PowerType"]
+__all__ = ["Card", "CardType"]
